@@ -1,0 +1,52 @@
+# Supporters added by hand (testers, friends, gifted tiers, Creator Economy buyers you want on the wall).
+# One per line: tier, a TAB, the exact VRChat display name. Tiers: 1 Supporter, 2 VIP, 3 VIP+.
+# Example (remove the leading "# "):
+# 2	YourTestAccount
+# friends promoting the world (owner, 2026-10-09): Plus, Kryti_N Elite
+3	Atlas Callisto
+2	blugrass
+2	Man_Gogh
+2	~Zalox~
+2	Roxxie Mason
+2	AldrynBuppy
+2	~Shadow Slick~
+2	CeresDemaybook
+2	DravenVeil
+2	BrimstoneBro
+2	Serim_
+2	PlexyAshworth
+2	Tokamoon
+2	Indy500Huskfolf
+2	ClutchAF
+2	Funlalabryant
+2	R O O D
+2	MrMaskedReap_55
+2	SKYLARthaPUPPY
+2	Lokien Fox
+2	Sealeo65
+2	KeyKou
+2	FuzzyGlacier
+2	clubby
+2	jaysee112
+2	AjaxTheHimbo
+2	GulidX
+2	Pan Pan <3
+2	Kodiē
+2	No_Vid
+2	Dwēn
+2	KobiiHusky
+2	Beta_Blue
+2	BinoWulf
+2	Keitothewolf
+2	Lizerls
+2	CØRBIN
+2	System_Demon
+2	M A R T I N I
+2	Mike_the_Folf
+2	exos2306
+2	Flare_The_Wolfy
+2	BlueFox94
+2	Aaron Ott
+2	Kaizky
+2	RexWusky
+3	Kryti_N
