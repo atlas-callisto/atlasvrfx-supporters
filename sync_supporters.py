@@ -29,7 +29,7 @@ import urllib.request
 API = "https://www.patreon.com/api/oauth2/v2"
 # pledge (in the campaign's currency, pence for GBP) -> world tier: 1 Core (1), 2 Plus (2), 3 Elite (6). Free members get
 # nothing. Core is a name on the supporter wall; Plus and Elite open every VIP area (Elite is a tip tier).
-TIER_CENTS = [(600, 3), (200, 2), (100, 1)]
+TIER_CENTS = [(800, 3), (400, 2), (100, 1)]   # Elite 8 pounds, Plus 4 pounds, Core 1 pound (owner, 2026-10-23)
 
 
 def get(url, token):
@@ -155,7 +155,9 @@ def main(out_path, manual_path):
     url, secret = os.environ.get("VERIFY_URL", "").strip(), os.environ.get("VERIFY_SECRET", "").strip()
     if url:
         try:                                             # tell the Worker who the patrons are, get the VRChat names back
-            req = urllib.request.Request(url, data=json.dumps({"patrons": discord_patrons(members, tiers)}).encode(),
+            vrc_path = os.path.join(os.path.dirname(os.path.abspath(manual_path)), "vrchat_buyers.json")        # (the VRChat subscribers, written by Tools/vrchat_group_supporters.py)
+            vrc = json.load(open(vrc_path, encoding="utf-8")) if os.path.exists(vrc_path) else {}
+            req = urllib.request.Request(url, data=json.dumps({"patrons": discord_patrons(members, tiers), "vrchat": {k: {"name": v["name"], "tier": v["tier"]} for k, v in vrc.items()}}).encode(),
                                          headers={"Authorization": "Bearer " + secret, "Content-Type": "application/json", "User-Agent": "atlasvrfx-supporters/1.0"})
             with urllib.request.urlopen(req, timeout=30) as r:
                 links = json.load(r).get("links", {})
@@ -180,7 +182,7 @@ def main(out_path, manual_path):
 
 
 def selftest():
-    tiers = {"t2": 100, "t5": 200, "t10": 600}
+    tiers = {"t2": 100, "t5": 400, "t10": 800}
     rel = lambda t: {"currently_entitled_tiers": {"data": [{"id": t, "type": "tier"}]}}
     members = [
         {"attributes": {"patron_status": "active_patron", "note": "AtlasFan", "full_name": "A"}, "relationships": rel("t5")},
@@ -189,7 +191,7 @@ def selftest():
         {"attributes": {"patron_status": "former_patron", "note": "Gone", "full_name": "D"}, "relationships": rel("t10")},
         {"attributes": {"patron_status": "active_patron", "note": "", "full_name": "E"}, "relationships": rel("t5")},
         {"attributes": {"patron_status": "active_patron", "note": "FreeFollower", "full_name": "F"}, "relationships": {}},
-        {"attributes": {"patron_status": "active_patron", "note": "Legacy", "full_name": "G", "currently_entitled_amount_cents": 300}},
+        {"attributes": {"patron_status": "active_patron", "note": "Legacy", "full_name": "G", "currently_entitled_amount_cents": 500}},
     ]
     names, skipped = build(members, tiers, ["# comment", "2\tTester Friend", "1\tAtlasFan"])
     assert names == {"AtlasFan": 2, "Tipper": 3, "Small": 1, "Tester Friend": 2, "Legacy": 2}, names
