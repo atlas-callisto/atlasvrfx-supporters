@@ -1,0 +1,24 @@
+name: Sync Patreon supporters
+on:
+  schedule:
+    - cron: "*/15 * * * *"        # every 15 minutes (GitHub may delay scheduled runs a few minutes at busy times)
+  workflow_dispatch: {}            # "Run workflow" button for an instant refresh
+permissions:
+  contents: write
+concurrency:
+  group: supporters
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch supporters from Patreon
+        env:
+          PATREON_TOKEN: ${{ secrets.PATREON_TOKEN }}
+          PATREON_CAMPAIGN_ID: ${{ secrets.PATREON_CAMPAIGN_ID }}
+          VERIFY_URL: ${{ secrets.VERIFY_URL }}        
