@@ -4,6 +4,7 @@
 2	Aaron Ott
 2	AjaxTheHimbo
 2	AldrynBuppy
+2	Baron494
 2	Beta_Blue
 2	BlueFox94
 2	BrimstoneBro
@@ -31,4 +32,5 @@
 2	Serim_
 2	System_Demon
 2	Tokamoon
+2	WickedVillan
 2	~Zalox~
