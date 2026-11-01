@@ -1,6 +1,7 @@
 # AtlasVRFX Photo Studio supporters: tier<TAB>VRChat name. Generated; edit manual.txt instead.
 3	Atlas Callisto
 3	Kryti_N
+3	RexWusky
 2	Aaron Ott
 2	AjaxTheHimbo
 2	AldrynBuppy
@@ -27,7 +28,6 @@
 2	MrMaskedReap_55
 2	Pan Pan <3
 2	PlexyAshworth
-2	RexWusky
 2	Roxxie Mason
 2	Serim_
 2	System_Demon
