@@ -5,5 +5,6 @@
 3	Kryti_N
 3	RexWusky
 3	Serim_
+2	exos2306
 2	Kaizky
 2	Lokien Fox
