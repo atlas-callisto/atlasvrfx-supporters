@@ -51,7 +51,7 @@ def campaign_id(token):
 def fetch_members(token, cid):
     """All members with patron_status, note, pledge and entitled tiers (follows pagination)."""
     q = {"include": "currently_entitled_tiers,user",
-         "fields[member]": "patron_status,note,full_name,currently_entitled_amount_cents",
+         "fields[member]": "patron_status,note,full_name,currently_entitled_amount_cents,will_pay_amount_cents,pledge_relationship_start",
          "fields[tier]": "amount_cents,title",
          "fields[user]": "social_connections",
          "page[count]": "500"}
@@ -106,6 +106,30 @@ def discord_patrons(members, tiers):
     return {members[i]["discord_id"]: t for i, t in active_tiers(members, tiers).items() if members[i].get("discord_id")}
 
 
+def discord_details(members, tiers):
+    """{discord user id: {tier, paid, list, since}} for the same patrons (the owner's private log, 2026-11-02): paid is what Patreon will charge in pence (a discount shows
+    as less than list, the tier's own price), since the day the pledge began."""
+    out = {}
+    for i, t in active_tiers(members, tiers).items():
+        m = members[i]
+        if not m.get("discord_id"):
+            continue
+        a = m.get("attributes") or {}
+        out[m["discord_id"]] = {"tier": t, "paid": a.get("will_pay_amount_cents"), "list": dict((v, k) for k, v in TIER_CENTS).get(t), "since": (a.get("pledge_relationship_start") or "")[:10]}
+    return out
+
+
+def pledge_list(members, tiers):
+    """[{id, name, tier, paid, discord, note, since}] for every active patron, linked or not (the Worker's #supporter-log message for each pledge, owner, 2026-11-07)."""
+    out = []
+    for i, t in active_tiers(members, tiers).items():
+        m = members[i]
+        a = m.get("attributes") or {}
+        out.append({"id": str(m.get("id")), "name": a.get("full_name") or "?", "tier": t, "paid": a.get("will_pay_amount_cents"), "discord": m.get("discord_id") or "",
+                    "note": clean_name(a.get("note")), "since": (a.get("pledge_relationship_start") or "")[:10]})
+    return out
+
+
 def build(members, tiers, manual_lines, links=None):
     """-> ({name: tier}, [skipped descriptions]); links: {discord id: VRChat name} from the Discord /verify Worker"""
     links = links or {}
@@ -151,20 +175,25 @@ def main(out_path, manual_path):
         members, tiers = fetch_members(token, campaign_id(token))
     except Exception as e:                               # keep the last good list online
         sys.exit(f"Patreon API failed, keeping the existing list: {e}")
-    links = {}
+    links, grants = {}, []
     url, secret = os.environ.get("VERIFY_URL", "").strip(), os.environ.get("VERIFY_SECRET", "").strip()
     if url:
         try:                                             # tell the Worker who the patrons are, get the VRChat names back
             vrc_path = os.path.join(os.path.dirname(os.path.abspath(manual_path)), "vrchat_buyers.json")        # (the VRChat subscribers, written by Tools/vrchat_group_supporters.py)
             vrc = json.load(open(vrc_path, encoding="utf-8")) if os.path.exists(vrc_path) else {}
-            req = urllib.request.Request(url, data=json.dumps({"patrons": discord_patrons(members, tiers), "vrchat": {k: {"name": v["name"], "tier": v["tier"]} for k, v in vrc.items()}}).encode(),
+            req = urllib.request.Request(url, data=json.dumps({"patrons": discord_patrons(members, tiers), "details": discord_details(members, tiers), "pledges": pledge_list(members, tiers), "vrchat": {k: {"name": v["name"], "tier": v["tier"]} for k, v in vrc.items()}}).encode(),
                                          headers={"Authorization": "Bearer " + secret, "Content-Type": "application/json", "User-Agent": "atlasvrfx-supporters/1.0"})
             with urllib.request.urlopen(req, timeout=30) as r:
-                links = json.load(r).get("links", {})
+                answer = json.load(r)
+                links, grants = answer.get("links", {}), answer.get("grants", [])        # (grants: the moderators' manual passes, Discord /grant: still within their days)
         except Exception as e:                           # (links missing would drop every verified patron: keep the last list)
             sys.exit(f"The verification Worker failed, keeping the existing list: {e}")
     manual = open(manual_path, encoding="utf-8").read().splitlines() if os.path.exists(manual_path) else []
     names, skipped = build(members, tiers, manual, links)
+    for g in grants:                                     # (a manual pass raises a name to its tier, never lowers one)
+        nm = clean_name(g.get("name"))
+        if nm and int(g.get("tier", 0)) > 0:
+            names[nm] = max(int(g["tier"]), names.get(nm, 0))
     for s in skipped:
         print("SKIPPED", s)
     old = open(out_path, encoding="utf-8").read() if os.path.exists(out_path) else ""
