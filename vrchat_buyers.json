@@ -1,1 +1,26 @@
-{}
+{
+ "usr_20739d84-aa1c-44d7-b503-03f3f8db770d": {
+  "name": "Nyxol",
+  "tier": 1
+ },
+ "usr_41e79414-7287-4242-b75f-c534acd8a9f8": {
+  "name": "Kalerua",
+  "tier": 2
+ },
+ "usr_60fdc14e-4d0c-4754-a311-1e6b77e57800": {
+  "name": "Ceeryn",
+  "tier": 1
+ },
+ "usr_ae1e0dea-4e4b-4a0c-ac47-51aa07dc2e4b": {
+  "name": "KurikaKay",
+  "tier": 1
+ },
+ "usr_b7e6c9f3-6c9c-48a2-979e-1579aa9b5a12": {
+  "name": "Xardas-CH",
+  "tier": 1
+ },
+ "usr_d4fdaa58-9e64-4812-a15c-f422d8ba983f": {
+  "name": "ZerahVon",
+  "tier": 2
+ }
+}
