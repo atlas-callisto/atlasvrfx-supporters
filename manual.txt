@@ -16,6 +16,7 @@
 1	Ceeryn
 1	HuckleBrry
 1	KurikaKay
+1	Neruco
 1	Nyxol
 1	Xardas-CH
 # --- end VRChat buyers ---
