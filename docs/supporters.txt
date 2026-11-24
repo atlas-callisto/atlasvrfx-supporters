@@ -28,4 +28,5 @@
 1	KurikaKay
 1	Neruco
 1	Nyxol
+1	ProtoKiri
 1	Xardas-CH
